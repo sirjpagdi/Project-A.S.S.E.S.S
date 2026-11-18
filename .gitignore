@@ -22,3 +22,4 @@ keystore.properties
 *.jks
 *.keystore
 !/app/debug.keystore
+keystore.properties.template
