@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- v3.1.2: no drawer/hamburger on this screen, per explicit instruction —
+     this is the camera capture screen only, and it doesn't need one. A
+     drawer/hamburger was added here briefly in an earlier v3.1 revision;
+     removed again. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:importantForAutofill="noExcludeDescendants"
+    android:background="#000000">
+
+    <!-- Live camera preview, filling the screen. -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Alignment guide squares drawn over the preview. -->
+    <com.jpagdi.mcqquickcheck.ScanOverlayView
+        android:id="@+id/scanOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tvScanTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="#99000000"
+        android:text="Scan Filled Sheet"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:padding="16dp" />
+
+    <TextView
+        android:id="@+id/tvOverlayHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="100dp"
+        android:background="#99000000"
+        android:text="Green means that corner looks aligned. Fit the sheet in frame, then tap Capture"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:padding="8dp" />
+
+    <!-- v3.7 fix: was a plain <Button> with android:drawableStart — the
+         camera icon wasn't actually rendering (same class of bug as
+         Generate/Edit Template's buttons). Converted to a LinearLayout so
+         the icon reliably shows and centers as a unit with the text —
+         gravity="bottom|center_horizontal" carries over unchanged from
+         the Button so its position on the camera preview doesn't move. -->
+    <LinearLayout
+        android:id="@+id/btnCapture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:background="@drawable/bg_card_rounded"
+        android:backgroundTint="?attr/colorAccent"
+        android:tag="accent_gold"
+        android:clipToOutline="true"
+        android:elevation="2dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- v3.7.3 fix: hardcoded black with no adaptivity — parent is
+             tagged accent_gold, fixed with _on contrast tags (white on a
+             dark/darker chosen accent, black on a light/lighter one). -->
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_camera"
+            android:tint="@android:color/black"
+            android:tag="accent_gold_icon_on"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Capture Photo"
+            android:textAllCaps="true"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:tag="accent_gold_text_on" />
+    </LinearLayout>
+
+    <!-- Shown instead of the preview if camera permission hasn't been granted yet. -->
+    <LinearLayout
+        android:id="@+id/permissionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="?android:attr/windowBackground"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Camera permission is needed to scan sheets."
+            android:textAlignment="center"
+            android:layout_marginBottom="12dp" />
+
+        <!-- v3.7.3: converted from a plain Button with drawableStart (icon
+             wasn't centering as a unit with the text — same class of bug
+             fixed on Capture Photo in v3.7) to the same rounded-card
+             LinearLayout pattern: bg_card_rounded + accent tag on the
+             card, separate ImageView/TextView children so gravity=center
+             truly centers the icon+text pair, with _icon_on/_text_on
+             contrast tags so they stay readable against whichever accent
+             color the card ends up tinted. -->
+        <LinearLayout
+            android:id="@+id/btnGrantPermission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/bg_card_rounded"
+            android:backgroundTint="?attr/colorPrimary"
+            android:tag="accent_maroon"
+            android:clipToOutline="true"
+            android:elevation="2dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_camera"
+                android:tint="@android:color/white"
+                android:tag="accent_maroon_icon_on"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Grant Camera Permission"
+                android:textAllCaps="true"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:tag="accent_maroon_text_on" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Result panel: covers the whole screen once a photo has been processed.
+         Score is fixed at top (big, always visible), Scan Next/Done are fixed
+         at the bottom (always visible) — only the image + per-question
+         breakdown in between scroll, so a long test can never push the
+         buttons off-screen the way a single non-scrolling column could. -->
+    <LinearLayout
+        android:id="@+id/resultPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="?android:attr/windowBackground"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvScoreHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Result"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginVertical="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.jpagdi.mcqquickcheck.ZoomableImageView
+                    android:id="@+id/ivPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="420dp"
+                    android:background="#DDDDDD" />
+
+                <TextView
+                    android:id="@+id/tvResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp" />
+
+                <!-- v3.3: populated programmatically (see ScanActivity's
+                     AmbiguousAnswerPanel usage) with one row per ambiguous
+                     question, letting the teacher tap A-E to resolve it.
+                     Empty/gone when nothing on this scan is ambiguous. -->
+                <LinearLayout
+                    android:id="@+id/llAmbiguousPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical"
+                    android:visibility="gone" />
+
+                <!-- Delete-scanned-sheet icon: only meaningful once a sheet
+                     has actually been auto-saved, which depends on the
+                     "save scanned sheet" Settings toggle that doesn't exist
+                     yet (see SettingsActivity placeholder). Hidden by
+                     default rather than wired to a non-existent setting —
+                     will be shown/enabled once that setting is real. -->
+                <ImageView
+                    android:id="@+id/btnDeleteScannedSheet"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_gravity="end"
+                    android:padding="6dp"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Delete scanned sheet"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- v3.7.3: converted from a plain Button with drawableStart (icon
+             wasn't centering as a unit with the text) to the same
+             rounded-card LinearLayout pattern used by Capture Photo and
+             Grant Camera Permission. Also switched from accent_maroon to
+             accent_gold per explicit request — this is the "detected key"
+             screen's confirm action, matching the app's convention of
+             gold for that role (e.g. Save Answer Key). _icon_on/_text_on
+             contrast tags compute readable icon/text color against
+             whichever gold shade the user has chosen, same as every
+             other gold-tagged card. -->
+        <LinearLayout
+            android:id="@+id/btnUseAsKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_card_rounded"
+            android:backgroundTint="?attr/colorAccent"
+            android:tag="accent_gold"
+            android:clipToOutline="true"
+            android:elevation="2dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_key"
+                android:tint="@android:color/black"
+                android:tag="accent_gold_icon_on"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Use This as Answer Key"
+                android:textAllCaps="true"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:tag="accent_gold_text_on" />
+        </LinearLayout>
+
+        <!-- v3.4: shown INSTEAD of normalButtonRow when reviewing a
+             REJECTED_UNCLEAR scan that still has a real (if uncertain)
+             reading — see ScanActivity's showUnclearReviewPrompt(). Two
+             explicit choices rather than silently either discarding or
+             auto-saving an unclear result: the teacher decides per-sheet
+             whether the tentative score/detected marks are trustworthy
+             enough to keep, after optionally resolving ambiguous bubbles
+             via llAmbiguousPanel above (same panel accepted scans use).
+
+             v3.8.2: converted from plain <Button> elements to the
+             rounded-card LinearLayout icon+text pattern (see btnScanNext/
+             btnDone below, and Use This as Answer Key above) — these two
+             were missed in the earlier app-wide button redesign. Also
+             switched from side-by-side half-width to each button being
+             its own full-width row (Delete Sheet, then Save & Proceed
+             below it): previously "Delete Sheet" was forced onto two
+             lines ("Delete\nSheet") purely to match "Save & Proceed"'s
+             natural two-line wrap at half width — a hacky fix for a
+             height mismatch. Full width removes the need for that forced
+             break entirely; both rows now get their natural single-line
+             height. The delete icon is now tagged accent_gold_icon_on
+             (was a hardcoded black drawableTint) so it tracks the same
+             contrast-matched color AccentColorPrefs.applyAccents()
+             already computes for the text next to it, instead of staying
+             fixed regardless of the chosen accent. -->
+        <LinearLayout
+            android:id="@+id/unclearPromptRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/btnDeleteUnclear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:background="@drawable/bg_card_rounded"
+                android:backgroundTint="#FFE8B923"
+                android:tag="accent_gold"
+                android:clipToOutline="true"
+                android:elevation="2dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:tint="@android:color/black"
+                    android:tag="accent_gold_icon_on"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Delete Sheet"
+                    android:textAllCaps="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:tag="accent_gold_text_on" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnSaveUnclear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:background="@drawable/bg_card_rounded"
+                android:backgroundTint="?attr/colorPrimary"
+                android:tag="accent_maroon"
+                android:clipToOutline="true"
+                android:elevation="2dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_check"
+                    android:tint="@android:color/white"
+                    android:tag="accent_maroon_icon_on"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Save &amp; Proceed"
+                    android:textAllCaps="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:tag="accent_maroon_text_on" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/normalButtonRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- v3.7.3: converted from a plain Button with drawableStart
+                 (icon wasn't centering as a unit with the text) to the
+                 rounded-card LinearLayout pattern, same as Capture Photo/
+                 Grant Camera Permission/Use This as Answer Key. -->
+            <LinearLayout
+                android:id="@+id/btnScanNext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:background="@drawable/bg_card_rounded"
+                android:backgroundTint="?attr/colorPrimary"
+                android:tag="accent_gold"
+                android:clipToOutline="true"
+                android:elevation="2dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_scan_action"
+                    android:tint="@android:color/white"
+                    android:tag="accent_gold_icon_on"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Scan Next"
+                    android:textAllCaps="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:tag="accent_gold_text_on" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnDone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:background="@drawable/bg_card_rounded"
+                android:backgroundTint="?attr/colorPrimary"
+                android:tag="accent_maroon"
+                android:clipToOutline="true"
+                android:elevation="2dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_check"
+                    android:tint="@android:color/white"
+                    android:tag="accent_maroon_icon_on"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Done"
+                    android:textAllCaps="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:tag="accent_maroon_text_on" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

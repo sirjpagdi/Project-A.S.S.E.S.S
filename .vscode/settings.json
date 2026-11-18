@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+        "**/.settings": true
+    },
+    "java.configuration.checkProjectSettingsFolder": false,
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "/usr/local/sdkman/candidates/java/current"
+        }
+    ]
+}

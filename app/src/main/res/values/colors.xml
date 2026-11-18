@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Derived from Tarlac National High School seal -->
+    <color name="tnhs_maroon">#6B0F14</color>
+    <color name="tnhs_maroon_dark">#4A0709</color>
+    <color name="tnhs_gold">#E8B923</color>
+    <color name="tnhs_gold_light">#F5D97A</color>
+    <color name="tnhs_cream">#FFF8E7</color>
+    <color name="tnhs_cream_dark">#F2E9D3</color>
+    <color name="tnhs_ink">#221111</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- v2.8 fold-in: Dark theme's window background used to reuse
+         tnhs_ink (#221111) — a maroon-TINTED near-black (red channel
+         visibly higher than green/blue), not a neutral gray. Can't just
+         change tnhs_ink's own value, though, since it's ALSO Light theme's
+         primary text color (a different, correct use of that same color
+         resource) — so this is a genuinely new, dedicated color instead.
+         Neutral (R=G=B) and deliberately lighter than Black theme's
+         black_bg (#0D0D0D) below, so Dark and Black stay visually distinct
+         tiers rather than converging on nearly the same near-black. -->
+    <color name="dark_theme_surface">#242424</color>
+
+    <!-- v2.8 fold-in: sampled directly from welcome_animation.mp4's actual
+         pixel data (corner/edge pixels, consistent across start/middle/end
+         frames) — not guessed. Used ONLY for the splash screen's status
+         bar/background, so it visually matches the video with zero seam.
+         Deliberately a separate constant from dark_theme_surface even
+         though they're both "charcoal gray" — this one is pinned to the
+         splash asset's actual color and should be re-sampled if the splash
+         video is ever replaced again; dark_theme_surface is a designed
+         theme color with no such constraint. -->
+    <color name="splash_background">#29282D</color>
+
+    <!-- Black theme variant -->
+    <color name="black_bg">#0D0D0D</color>
+    <color name="black_surface">#1A1A1A</color>
+
+    <!-- v2.9: solid, fully-opaque light text for Dark/Black themes. See
+         themes.xml comment on android:textColorPrimary for why this
+         exists — MaterialComponents' own default for that attribute in
+         a dark theme is NOT solid white, it's white at ~87% alpha (the
+         Material "high-emphasis text" token), which is what was actually
+         making footer text (and technically every other textColorPrimary
+         use in Dark/Black) look faded across 4 previous fix attempts that
+         only ever touched the footer's own view attributes. -->
+    <color name="dark_theme_text_primary">#FFFFFF</color>
+
+    <!-- Rounded-card list style: one dedicated surface tone per theme,
+         each a deliberate step lighter than that theme's own window
+         background so cards read as raised panels rather than blending
+         flat into the page. Light reuses the app's cream family (kept
+         in the existing warm palette); Dark/Black each get a small step
+         up from their window background so cards stay visible against
+         it. Not reused from colorPrimary/colorAccent anywhere — this is
+         a fixed per-theme tone, independent of accent color choice. -->
+    <color name="card_surface_light">#FFFFFF</color>
+    <color name="card_surface_dark">#2E2E2E</color>
+    <color name="card_surface_black">#1A1A1A</color>
+
+    <!-- Hairline card border — just enough definition to read as a
+         card edge on themes where the fill-vs-background contrast alone
+         is subtle, without drawing a heavy outline. -->
+    <color name="card_stroke_on_light">#14000000</color>
+    <color name="card_stroke_on_dark">#1FFFFFFF</color>
+</resources>

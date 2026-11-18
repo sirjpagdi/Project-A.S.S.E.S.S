@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Checked/unchecked pill background for the A-D / A-E and storage-
+     resolution pill toggles. Sits nested inside the toggle's own outer
+     bg_card_rounded container with a small inset, so the checked option
+     reads as a pill "riding on top of" the card, matching the sample.
+     The colorAccent value below is only the pre-accent-system fallback —
+     every pill-toggle RadioButton is tagged android:tag="accent_gold" in
+     its XML, so AccentColorPrefs.tintSurface() overrides this via
+     backgroundTintList at runtime with whatever Button Accent color the
+     user has actually chosen (see AccentColorPrefs.kt's RadioButton
+     branch for the buttonDrawable==null case). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/colorAccent" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</selector>

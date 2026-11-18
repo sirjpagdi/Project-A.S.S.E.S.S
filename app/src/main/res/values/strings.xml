@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Project A.S.S.E.S.S.</string>
+    <string name="developer_credit">Developed by Sir_JPagdi</string>
+    <string name="about_description">Project A.S.S.E.S.S. turns your phone into a bubble-sheet scanner and grader — no separate scanner hardware, no backend server for scanning or grading. Generate a printable answer sheet, build an answer key by tapping bubbles, then scan filled sheets with the camera for instant, color-coded results.\n\nThe app processes assessment data locally; a project-specific update channel has not yet been configured.</string>
+    <string name="about_license">© 2026 Sir_JPagdi. All rights reserved. This application and its source code may not be copied, modified, or redistributed without permission.\n\nThis app uses the following open-source software:\n\n• OpenCV 4.9.0 — Apache License, Version 2.0\n• AndroidX libraries (Core, AppCompat, Material, ConstraintLayout, CameraX) — Apache License, Version 2.0\n\nFull license text: apache.org/licenses/LICENSE-2.0</string>
+</resources>

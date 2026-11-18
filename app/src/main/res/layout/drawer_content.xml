@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Standard nav-drawer content: header + a vertical list of rows. Each row
+     is a simple LinearLayout (icon + label), not a ListView/RecyclerView,
+     since the item count is small and fixed at layout time — this keeps
+     adding a future item a one-block copy-paste instead of touching an
+     adapter. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerRootPanel"
+    android:layout_width="300dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:attr/windowBackground">
+
+    <!-- Drawer header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@color/tnhs_maroon"
+        android:tag="accent_maroon"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/drawerLogo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/app_logo"
+            android:contentDescription="@string/app_name" />
+
+        <!-- v3.6.8: Press Start 2P here too — see activity_main.xml's
+             matching TextView for the full explanation; same decorative
+             pairing, not the general app font.
+             v3.6.9: was one TextView showing the full "Project A.S.S.E.S.S."
+             string at a fixed size — Press Start 2P's glyphs run
+             noticeably wider per character than Montserrat did, and it was
+             clipping against the drawer's fixed 300dp width instead of
+             wrapping. Split into two TextViews, sized independently
+             (MCQ bigger, Quick Check smaller).
+             v3.6.10: font now actually renders (see DrawerHelper.attach()
+             for the real fix — it was never a size/bold problem, AppCompat
+             was clobbering the XML fontFamily). Went through a single-line
+             autosize experiment after that (collapsing MCQ and Quick
+             Check into one TextView) to solve a "Quick Check" clipping
+             problem — that experiment was a mistake: it changed "MCQ"'s
+             size and merged it into one line too, when only "Quick Check"
+             was ever the problem, and "MCQ" was never asked to be
+             touched. Reverted back to two separate TextViews — "MCQ" and
+             "Quick Check" each on their own line, own size — matching
+             activity_main.xml's home-screen header exactly (18sp / 9sp),
+             which was already confirmed working correctly and wasn't the
+             thing that needed fixing. The drawer is now widened (see
+             DrawerHelper.attach(), set in code so it scales to roughly
+             half of any device's actual screen width rather than a
+             guessed fixed dp) instead of shrinking the text further, so
+             "Quick Check" has real room instead of being squeezed.
+             v3.8.2: header center-aligned (was left-aligned) and both
+             title TextViews given centerHorizontal gravity to match —
+             purely a gravity change, none of the sizing/font logic above
+             was touched. Tagline swapped from "Fast • Accurate • Offline"
+             to "SCAN • CHECK • REVIEW", per explicit request. -->
+        <TextView
+            android:id="@+id/tvDrawerTitleLine1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:text="MCQ"
+            android:textColor="@color/white"
+            android:tag="accent_maroon_text"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvDrawerTitleLine2"
+            android:layout_width="match_parent"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="5sp"
+            android:autoSizeMaxTextSize="9sp"
+            android:autoSizeStepGranularity="1sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center_horizontal"
+            android:text="Project A.S.S.E.S.S"
+            android:textColor="@color/white"
+            android:tag="accent_maroon_text"
+            android:textSize="9sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center_horizontal"
+            android:text="SCAN • CHECK • REVIEW"
+            android:textColor="@color/white"
+            android:tag="accent_maroon_text"
+            android:alpha="0.75"
+            android:letterSpacing="0.06"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp">
+
+            <TextView style="@style/DrawerSectionHeader" android:text="DATA" />
+
+            <LinearLayout
+                android:id="@+id/drawerBackupData"
+                style="@style/DrawerRow">
+                <ImageView style="@style/DrawerRowIcon" android:src="@drawable/ic_cloud_upload" android:tint="@color/tnhs_gold" android:contentDescription="@null" />
+                <TextView style="@style/DrawerRowLabel" android:text="Backup Data" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/drawerRestoreData"
+                style="@style/DrawerRow">
+                <ImageView style="@style/DrawerRowIcon" android:src="@drawable/ic_cloud_download" android:tint="@color/tnhs_gold" android:contentDescription="@null" />
+                <TextView style="@style/DrawerRowLabel" android:text="Restore Data" />
+            </LinearLayout>
+
+            <!-- v1.2.0: Classes (enrolled classes + per-learner scores). Label
+                 and visibility are set in DrawerHelper from ClassesAccess:
+                 locked plans see it with a lock, an entitled teacher who
+                 switched the feature off in Settings doesn't see it. -->
+            <LinearLayout
+                android:id="@+id/drawerClasses"
+                style="@style/DrawerRow">
+                <ImageView style="@style/DrawerRowIcon" android:src="@drawable/ic_layout_grid" android:tint="@color/tnhs_gold" android:contentDescription="@null" />
+                <TextView
+                    android:id="@+id/drawerClassesLabel"
+                    style="@style/DrawerRowLabel"
+                    android:text="Classes" />
+            </LinearLayout>
+
+            <TextView style="@style/DrawerSectionHeader" android:text="PREFERENCES" />
+
+            <LinearLayout
+                android:id="@+id/drawerTheme"
+                style="@style/DrawerRow">
+                <ImageView style="@style/DrawerRowIcon" android:src="@drawable/ic_palette" android:tint="@color/tnhs_gold" android:contentDescription="@null" />
+                <TextView
+                    android:id="@+id/drawerThemeLabel"
+                    style="@style/DrawerRowLabel"
+                    android:text="Theme: Light" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/drawerSettings"
+                style="@style/DrawerRow">
+                <ImageView style="@style/DrawerRowIcon" android:src="@drawable/ic_sliders" android:tint="@color/tnhs_gold" android:contentDescription="@null" />
+                <TextView style="@style/DrawerRowLabel" android:text="Settings" />
+            </LinearLayout>
+
+            <TextView style="@style/DrawerSectionHeader" android:text="SUPPORT" />
+
+            <LinearLayout
+                android:id="@+id/drawerHelp"
+                style="@style/DrawerRow">
+                <ImageView style="@style/DrawerRowIcon" android:src="@drawable/ic_help_circle" android:tint="@color/tnhs_gold" android:contentDescription="@null" />
+                <TextView style="@style/DrawerRowLabel" android:text="Help / FAQ" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/drawerAbout"
+                style="@style/DrawerRow">
+                <ImageView style="@style/DrawerRowIcon" android:src="@drawable/ic_info_circle" android:tint="@color/tnhs_gold" android:contentDescription="@null" />
+                <TextView style="@style/DrawerRowLabel" android:text="About" />
+            </LinearLayout>
+
+            <!-- Add future drawer items here as additional DrawerRow blocks,
+                 under whichever of the three section headers above fits, or
+                 a new section header if it belongs to neither. -->
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Footer: version + developer credit, centered, pinned to the bottom
+         of the drawer (outside the ScrollView above, so it never scrolls
+         away even if more rows get added later). Tapping it opens the
+         changelog — same behavior as the existing version number on the
+         home screen's own footer, just also reachable from here.
+         v3.6.10: "Developed by Sir_JPagdi" was clipping — this row was
+         already match_parent, the actual cause was just the drawer's
+         300dp width being too narrow for that string at 11sp. Fixed by
+         widening the drawer itself (see DrawerHelper.attach()), not by
+         changing anything in this block. -->
+    <LinearLayout
+        android:id="@+id/drawerFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingTop="12dp"
+        android:paddingBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            android:id="@+id/tvDrawerVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="v0.0"
+            android:textColor="?android:attr/textColorPrimary"
+            android:alpha="0.75"
+            android:textStyle="bold"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/developer_credit"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="11sp"
+            android:alpha="0.7" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <!-- Washed-out exam-day photo background, same treatment as the home
+         screen — applied consistently across every screen now, not just
+         Main. Single scrim (no header-band split) since this screen
+         doesn't have Main's translucent-header design. -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/exam_background"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/windowBackground"
+        android:alpha="0.96" />
+
+    <!-- Shared by AboutActivity, BackupDataActivity, RestoreDataActivity.
+         Wrapped in a ScrollView so About's What's New list (which grows over
+         time) stays reachable on any screen size instead of being clipped.
+         Backup/Restore's content is short and fixed, so this ScrollView simply
+         won't need to scroll for them — no visual change there. -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/placeholderContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <ImageView
+                android:id="@+id/btnOpenDrawer"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="12dp"
+                android:src="@drawable/ic_menu"
+                android:tint="?android:attr/textColorPrimary"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Open menu" />
+
+            <TextView
+                android:id="@+id/tvPlaceholderTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary" />
+
+            <TextView
+                android:id="@+id/tvPlaceholderBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="15sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:alpha="0.85" />
+
+            <!-- v3.8.2: explicit bg_card_rounded background (was relying
+                 on the Material theme's default Button corner radius,
+                 which is noticeably squarer than the 16dp radius used
+                 everywhere else in the app's redesign) so these two
+                 shared buttons match every other button's rounded-card
+                 look instead of standing out as the "old" style. -->
+            <Button
+                android:id="@+id/btnPlaceholderBack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Back"
+                android:background="@drawable/bg_card_rounded"
+                android:backgroundTint="?attr/colorPrimary"
+                android:tag="accent_maroon"
+                android:textColor="@android:color/white" />
+
+            <!-- v3.7.5: third optional shared-layout button, hidden by
+                 default (GONE) same as btnPlaceholderSecondary below —
+                 only AboutActivity shows this one (Check for Updates),
+                 sitting between the other two. Backup/Restore never
+                 touch this id, so it stays gone for them automatically. -->
+            <Button
+                android:id="@+id/btnPlaceholderTertiary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Back"
+                android:background="@drawable/bg_card_rounded"
+                android:backgroundTint="?attr/colorPrimary"
+                android:tag="accent_maroon"
+                android:textColor="@android:color/white"
+                android:visibility="gone" />
+
+            <!-- Optional second button, hidden by default (GONE). Screens like
+                 Backup/Restore repurpose btnPlaceholderBack as their primary action
+                 ("Export Backup" / "Choose Backup File") and use this one as the
+                 actual way back to the previous screen, so renaming the first
+                 button never removes real navigation. -->
+            <Button
+                android:id="@+id/btnPlaceholderSecondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Back"
+                android:background="@drawable/bg_card_rounded"
+                android:backgroundTint="?attr/colorPrimary"
+                android:tag="accent_maroon"
+                android:textColor="@android:color/white"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
+    </FrameLayout>
+
+    <include
+        layout="@layout/drawer_content"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

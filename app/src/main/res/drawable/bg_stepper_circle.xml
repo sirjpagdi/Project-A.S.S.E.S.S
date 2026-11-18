@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Round background for the +/- stepper buttons (Number of Items,
+     Columns, Questions per column, and Settings' matching steppers).
+     Solid color here is just a placeholder; these buttons are all tagged
+     accent_maroon, so AccentColorPrefs' Button branch overwrites this via
+     backgroundTintList at runtime — same mechanism already used for
+     bg_card_rounded elsewhere, just an oval shape instead of a rounded
+     rectangle.
+     v3.7.2 note: a separate branch tried decoupling these from the accent
+     system entirely via a dedicated ?attr/colorStepperCircle theme
+     attribute (neutral gray, no accent link). That's a real design
+     decision (gray vs. accent-following) that hasn't been confirmed yet,
+     so v3.7.2 reverts to the known-working accent_maroon behavior instead
+     of shipping it unconfirmed. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="?attr/colorPrimary" />
+</shape>

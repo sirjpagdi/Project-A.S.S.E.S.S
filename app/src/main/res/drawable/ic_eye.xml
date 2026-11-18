@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple outline eye glyph for the Blank / Answer Key preview buttons.
+     Outline-only, same reasoning as ic_document.xml — reads correctly under
+     a single-color android:tint. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.6"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M2,12 C4.5,7 8,4.8 12,4.8 C16,4.8 19.5,7 22,12 C19.5,17 16,19.2 12,19.2 C8,19.2 4.5,17 2,12 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,9.3 A2.7,2.7 0,0,1 12,14.7 A2.7,2.7 0,0,1 12,9.3 Z" />
+</vector>

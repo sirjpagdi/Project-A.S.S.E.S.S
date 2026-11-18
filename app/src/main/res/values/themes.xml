@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Light theme: cream background, maroon primary, gold accent -->
+    <style name="Theme.MCQScanner" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/tnhs_maroon</item>
+        <item name="colorPrimaryDark">@color/tnhs_maroon_dark</item>
+        <item name="colorAccent">@color/tnhs_gold</item>
+        <item name="colorSecondary">@color/tnhs_gold</item>
+        <item name="android:windowBackground">@color/tnhs_cream</item>
+        <item name="android:textColorPrimary">@color/tnhs_ink</item>
+        <item name="android:statusBarColor">@color/tnhs_maroon_dark</item>
+        <!-- v3.0: app-wide custom font, per explicit request — no system
+             font anywhere in the app. Set once here (and on Dark/Black
+             below, since they don't inherit from this style) rather than
+             per-view; AppCompatActivity's view inflater backports
+             android:fontFamily resolution to every standard TextView/
+             Button/EditText automatically, all the way back to this app's
+             minSdk 24, so no layout files needed touching.
+             v3.6.8: font swapped from Century Gothic to Montserrat — see
+             montserrat_family.xml's doc comment for why. -->
+        <item name="android:fontFamily">@font/montserrat_family</item>
+        <item name="fontFamily">@font/montserrat_family</item>
+        <!-- Rounded-card list style — see attrs.xml/colors.xml comments. -->
+        <item name="colorSurfaceCard">@color/card_surface_light</item>
+        <item name="colorSurfaceCardStroke">@color/card_stroke_on_light</item>
+    </style>
+
+    <!-- Dark theme: charcoal gray surface, gold accent still pops -->
+    <style name="Theme.MCQScanner.Dark" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/tnhs_maroon</item>
+        <item name="colorPrimaryDark">@color/tnhs_maroon_dark</item>
+        <item name="colorAccent">@color/tnhs_gold</item>
+        <item name="colorSecondary">@color/tnhs_gold</item>
+        <item name="android:windowBackground">@color/dark_theme_surface</item>
+        <item name="android:statusBarColor">@color/tnhs_maroon_dark</item>
+        <!-- v2.9 ROOT-CAUSE FIX for the footer-opacity bug (open item from
+             the v2.8 arc, guessed wrong twice via alpha/textColor tweaks
+             on the footer's OWN views instead of the theme). This line
+             was simply missing. MaterialComponents.NoActionBar's own
+             default for android:textColorPrimary in a dark theme is white
+             at ~87% alpha (Material's "high-emphasis text" token), not
+             solid white — every view in this theme using
+             ?android:attr/textColorPrimary (footer, header title, drawer
+             rows, settings labels) was rendering slightly translucent as
+             a result, not just the footer. Light theme never had this bug
+             because it already explicitly sets this attribute below to
+             @color/tnhs_ink (a solid color). Confirmed by checking
+             MaterialComponents' documented default for this attribute,
+             not guessed. -->
+        <item name="android:textColorPrimary">@color/dark_theme_text_primary</item>
+        <item name="android:fontFamily">@font/montserrat_family</item>
+        <item name="fontFamily">@font/montserrat_family</item>
+        <!-- Rounded-card list style — see attrs.xml/colors.xml comments. -->
+        <item name="colorSurfaceCard">@color/card_surface_dark</item>
+        <item name="colorSurfaceCardStroke">@color/card_stroke_on_dark</item>
+    </style>
+
+    <!-- Black theme: true black (OLED-friendly), gold accent only -->
+    <style name="Theme.MCQScanner.Black" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/black_surface</item>
+        <item name="colorPrimaryDark">@color/black_bg</item>
+        <item name="colorAccent">@color/tnhs_gold</item>
+        <item name="colorSecondary">@color/tnhs_gold</item>
+        <item name="android:windowBackground">@color/black_bg</item>
+        <item name="android:statusBarColor">@color/black_bg</item>
+        <!-- Same root-cause fix as Dark theme above — same missing
+             attribute, same platform default translucency. -->
+        <item name="android:textColorPrimary">@color/dark_theme_text_primary</item>
+        <item name="android:fontFamily">@font/montserrat_family</item>
+        <item name="fontFamily">@font/montserrat_family</item>
+        <!-- Rounded-card list style — see attrs.xml/colors.xml comments. -->
+        <item name="colorSurfaceCard">@color/card_surface_black</item>
+        <item name="colorSurfaceCardStroke">@color/card_stroke_on_dark</item>
+    </style>
+
+    <!-- Welcome-animation screen: fixed background regardless of the
+         user's Light/Dark/Black preference — this is a splash-style
+         screen shown before ThemePrefs would even matter visually.
+         v2.8 fold-in: background/status bar changed from pure black to
+         splash_background (#29282D), sampled directly from the actual
+         video's own pixels, for a seamless look with no color mismatch
+         at the video's edges — deliberately NOT the accent system
+         (Group A/B), since this is a fixed asset-matched color, not a
+         user preference.
+         windowFullscreen was REMOVED in a later fold-in: it was causing
+         android:statusBarColor below to be silently ignored (status bar
+         rendered plain black) even though the status bar was still
+         visibly showing time/icons, not actually hidden — this app has
+         no other screen using windowFullscreen, and every other screen's
+         colored status bar (e.g. ScanActivity's) works correctly without
+         it, which is what confirmed this flag as the cause rather than
+         something in the color values themselves. -->
+    <style name="Theme.MCQScanner.Welcome" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/splash_background</item>
+        <item name="android:navigationBarColor">@color/splash_background</item>
+    </style>
+
+    <!-- Nav drawer row: tappable, ripple feedback, consistent padding.
+         Text color uses android:textColorPrimary (NOT colorPrimary — that's
+         a dark surface color meant for backgrounds, unreadable as text in
+         Dark/Black themes, per the project's known bug class). -->
+    <!-- v3.8.2: rounded-card row (was full-bleed selectableItemBackground
+         only) — background is the shared bg_card_rounded shape, ripple
+         feedback kept via android:foreground so tap feedback still shows
+         on top of the rounded card instead of being lost. Applies
+         uniformly to every drawer row since none of them are meant to
+         look different from each other by default. -->
+    <!-- v3.8.5: reverted to a plain full-width list row (was a
+         rounded-card row with margins, added in v3.8.2) — per explicit
+         feedback, only the sidebar should stay a plain list; icons per
+         row are unchanged/kept. Every other screen's list (Home, Test
+         Detail, Scanned Sheets) keeps its own separate rounded-card
+         styling — this style is scoped to drawer_content.xml only, so
+         reverting it here doesn't touch those. -->
+    <style name="DrawerRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="DrawerRowIcon">
+        <item name="android:layout_width">22dp</item>
+        <item name="android:layout_height">22dp</item>
+        <item name="android:layout_marginEnd">14dp</item>
+    </style>
+
+    <style name="DrawerSectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:alpha">0.6</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="DrawerRowLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <!-- v1.2.0: Subscriptions screen plan cards. SubscriptionsActivity
+         toggles a card's selected state (border/tint) in code rather than
+         via a second style, since only one of the three paid cards is
+         ever "current" at a time and that state changes at runtime. -->
+    <style name="PlanCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/bg_card_rounded</item>
+        <item name="android:backgroundTint">?android:attr/colorBackground</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <style name="PlanCardTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="PlanCardSubtitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:alpha">0.7</item>
+    </style>
+
+    <!-- Fixed: this used to be a bare style on a plain <Button>, but the app
+         theme is MaterialComponents, so every Button is inflated as a
+         MaterialButton — which ignores android:backgroundTint and paints
+         itself solid colorPrimary. With this style's text ALSO colorPrimary
+         the "Transfer From Another Device" button rendered as a blank maroon
+         bar. Now a real Material outlined button (transparent fill, stroke),
+         with theme-aware text/stroke so it reads in Light, Dark and Black. -->
+    <style name="PlanCardOutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="strokeColor">?android:attr/textColorPrimary</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+</resources>

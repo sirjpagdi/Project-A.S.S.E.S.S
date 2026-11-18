@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- v3.8 redesign: rounded-card row matching the sample redesign proposal.
+     Score is now split into tvScanScore ("22 / 60", theme text color) and
+     tvScanPercent ("36.6%", a fixed highlight gold — NOT accent-tagged, so
+     it does not follow the user's customizable Button Accent, per explicit
+     instruction that only Scan Filled Answer Sheets should follow the gold
+     group). Thumbnail width is UNCHANGED (170dp) — do not shrink the
+     cropped Name/Gr.&Section preview. Move/Delete icons are UNCHANGED
+     (still ic_menu_send / ic_menu_delete) — do not replace the send icon
+     with a share icon — just wrapped in a theme-colored circular badge to
+     match the sample's look. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rowSavedScanCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:background="@drawable/bg_card_rounded"
+    android:clipToOutline="true"
+    android:elevation="1dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Hidden outside multi-select mode. Long-pressing any row's trash
+         icon (btnScanDelete below) turns this on for every row at once. -->
+    <CheckBox
+        android:id="@+id/cbScanSelect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone" />
+
+    <!-- The cropped Name/Gr.&Section region (SheetTemplate's own header
+         fractions: GRID_LEFT..TABLE_MID_X_FRACTION wide, TABLE_TOP..
+         TABLE_ROW2_BOTTOM tall) is a very wide, short strip in its real
+         proportions — roughly 7.6:1. The old fixed 84dp x 56dp box (about
+         1.5:1) let fitCenter shrink the image down to a sliver to avoid
+         distorting it, which made the crop tiny and effectively unreadable
+         even though the box itself looked reasonably sized. Fixed width +
+         adjustViewBounds lets the view's actual rendered height follow the
+         real bitmap aspect ratio instead of a hand-guessed number that
+         would drift if capture resolution ever changes. Width kept exactly
+         as-is in the v3.8 card redesign — do not shrink this. -->
+    <ImageView
+        android:id="@+id/ivScanThumbnail"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:background="#22000000"
+        android:contentDescription="Name and section preview" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="14dp"
+        android:orientation="vertical">
+
+        <!-- v3.7: was score+percentage sharing one line, date+time below.
+             Restructured per explicit request: percentage now gets its
+             own line (smaller font) instead of crowding the score, and
+             date+time is guaranteed to stay on one line (maxLines+
+             ellipsize) instead of being able to wrap if this column's
+             available width runs narrow (170dp thumbnail + two 36dp icon
+             buttons leave fairly little room here on smaller phones). -->
+        <TextView
+            android:id="@+id/tvScanScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <!-- Fixed highlight color (@color/tnhs_gold — the app's true
+             default gold, DEFAULT_GROUP_B in AccentColorPrefs.kt; was
+             tnhs_gold_light, a different lighter shade), not tagged
+             accent_gold — stays constant regardless of the user's
+             chosen Button Accent, per explicit instruction. -->
+        <TextView
+            android:id="@+id/tvScanPercent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/tnhs_gold" />
+
+        <TextView
+            android:id="@+id/tvScanDateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:alpha="0.7"
+            android:textColor="?android:attr/textColorPrimary" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btnScanMove"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="6dp"
+        android:padding="7dp"
+        android:src="@android:drawable/ic_menu_send"
+        android:tint="?android:attr/textColorPrimary"
+        android:background="@drawable/bg_row_icon_circle"
+        android:contentDescription="Move to folder" />
+
+    <ImageView
+        android:id="@+id/btnScanDelete"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="7dp"
+        android:src="@android:drawable/ic_menu_delete"
+        android:tint="?android:attr/textColorPrimary"
+        android:background="@drawable/bg_row_icon_circle"
+        android:contentDescription="Delete this scan" />
+</LinearLayout>

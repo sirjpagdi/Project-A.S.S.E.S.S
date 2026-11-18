@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Restore Data row icon. Same cloud outline as ic_cloud_upload, arrow
+     reversed. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M7,18 C4.8,18 3,16.2 3,14 C3,12 4.4,10.4 6.3,10.1 C6.7,7.2 9.1,5 12,5 C14.9,5 17.3,7.2 17.7,10.1 C19.6,10.4 21,12 21,14 C21,16.2 19.2,18 17,18 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M12,11 V18.5 M9,15.5 L12,18.5 L15,15.5" />
+</vector>

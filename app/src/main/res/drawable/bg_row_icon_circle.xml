@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Circular badge background for the move/delete icons on a scan row,
+     matching the sample redesign proposal. Theme-neutral (not accent-tied)
+     — a translucent overlay on top of the surrounding card color, so it
+     reads correctly on Light/Dark/Black without needing per-theme colors. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="?attr/colorSurfaceCardStroke" />
+</shape>

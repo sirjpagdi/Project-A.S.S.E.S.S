@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- v2.9: needed on Android 13+ (API 33) to show the "saved to
+         Downloads" confirmation notification. No-op / auto-granted at
+         install on older versions — still safe to declare unconditionally. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- v3.9.0: re-added — was removed in v3.1.4 when Send Diagnostic
+         Report switched from an HTTP upload to a plain email handoff,
+         making this app fully offline again at the time. The Update
+         Checker (GitHub Releases API) is this app's first network call
+         since then. Normal permission, auto-granted at install — no
+         runtime prompt needed, unlike CAMERA/POST_NOTIFICATIONS above. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- v3.9.0: required to launch the platform installer for a
+         downloaded update APK. On API 26+ this alone isn't sufficient —
+         the OS also requires canRequestPackageInstalls() to be true for
+         this specific app, granted per-app via Settings
+         (ACTION_MANAGE_UNKNOWN_APP_SOURCES) — see UpdateInstaller.kt. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+
+    <application
+        android:name=".McqApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.MCQScanner"
+        android:supportsRtl="true">
+
+        <activity
+            android:name=".WelcomeActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden"
+            android:theme="@style/Theme.MCQScanner.Welcome">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden">
+        </activity>
+
+        <activity android:name=".ScanActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".ChangelogActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".AnswerKeyActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".GenerateSheetActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".BackupDataActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".RestoreDataActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".SettingsActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".AboutActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".HelpActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".SavedScansListActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".ItemAnalysisActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".CompetencySetupActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".TestDetailActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".ClassesActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".ClassDetailActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".ClassSheetActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".LearnersActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".LearnerProfileActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".ArchivedTestsActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+        <activity android:name=".ArchivedClassesActivity" android:exported="false" android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- v3.9.1: manifest-declared so it survives process death — see
+             UpdateDownloadReceiver's class doc comment. exported="true" is
+             required by API 31+ for any manifest receiver with an
+             intent-filter; safe here since ACTION_DOWNLOAD_COMPLETE is a
+             protected system broadcast no other app can spoof. -->
+        <receiver
+            android:name=".UpdateDownloadReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

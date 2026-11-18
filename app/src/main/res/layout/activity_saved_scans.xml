@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <!-- Washed-out exam-day photo background, same treatment as the home
+         screen, applied consistently across every screen. -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/exam_background"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/windowBackground"
+        android:alpha="0.96" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/savedScansHeaderBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/tnhs_maroon"
+        android:tag="accent_maroon"
+        android:padding="16dp">
+
+        <!-- v3.7 fix: same maroon-on-maroon issue as Test Detail's header —
+             see that layout's comment for the full explanation. -->
+        <ImageView
+            android:id="@+id/btnOpenDrawer"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_menu"
+            android:tint="@android:color/white"
+            android:tag="accent_maroon_icon_on"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Open menu" />
+
+        <TextView
+            android:id="@+id/tvSavedScansTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Scanned Sheets"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:tag="accent_maroon_text" />
+
+        <!-- v3.7 fix: same maroon-on-maroon issue as btnOpenDrawer above —
+             this sits on the same maroon header bar, so it needs the _on
+             contrast variant too (previously accent_maroon_icon, which
+             tinted it the same maroon as its own background). -->
+        <ImageView
+            android:id="@+id/btnAddFolder"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="4dp"
+            android:src="@android:drawable/ic_input_add"
+            android:tint="@android:color/white"
+            android:tag="accent_maroon_icon_on"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Add folder" />
+
+        <!-- Multi-select mode header controls — gone by default, shown only
+             after long-pressing a row's trash icon. There's no separate
+             top-right select-toggle icon on this screen by design (per
+             spec); this is the exit/bulk-delete affordance for the mode
+             once it's already active. -->
+        <ImageView
+            android:id="@+id/btnCancelSelect"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="12dp"
+            android:padding="2dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Cancel selection"
+            android:visibility="gone" />
+
+        <!-- v1.0.1: select/unselect-all toggle, shown in EITHER select
+             mode (delete or move) — see btnDeleteSelectedScans/
+             btnMoveSelectedScans below for the two mode-specific action
+             icons this sits alongside. Single icon toggles between
+             selecting everything currently visible and clearing the
+             selection, based on whether everything's already selected
+             (see updateSelectAllIcon()). -->
+        <ImageView
+            android:id="@+id/btnSelectAllScans"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="12dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_check"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Select all"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/btnDeleteSelectedScans"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="2dp"
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete selected scans"
+            android:visibility="gone" />
+
+        <!-- v1.0.1: bulk-move confirm icon — same slot/style as
+             btnDeleteSelectedScans above, mutually exclusive with it
+             (only one is ever visible at a time, depending on whether
+             select mode was entered via the row trash icon's long-press
+             or the row send/move icon's long-press). -->
+        <ImageView
+            android:id="@+id/btnMoveSelectedScans"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="2dp"
+            android:src="@android:drawable/ic_menu_send"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Move selected scans"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Folder tabs: a horizontally scrolling row of tappable folder names,
+         "main" always first and always present. Sort icon sits outside the
+         scrolling region (fixed width, own row) so it stays reachable
+         regardless of how many folder tabs there are to scroll through. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/folderTabsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp" />
+        </HorizontalScrollView>
+
+        <ImageView
+            android:id="@+id/btnSortScans"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="8dp"
+            android:padding="4dp"
+            android:src="@android:drawable/ic_menu_sort_by_size"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Sort scans" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="32dp"
+        android:gravity="center"
+        android:text="No saved scans in this folder yet."
+        android:textColor="?android:attr/textColorPrimary"
+        android:alpha="0.6"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/scanListScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/scanListContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <!-- v3.6.2: dedicated folder prev/next row, replacing every earlier
+         swipe-on-the-scrollable-list attempt (header bar in v3.5/3.5.1,
+         then the whole scan list in v3.6/3.6.1). This row isn't a
+         scrollable view, so there's no ACTION_DOWN ownership conflict to
+         work around in the first place — the < and > buttons are the
+         primary way to move between folders now, with swipe-anywhere-on-
+         this-row as a bonus on top of them, both calling swipeFolder(). -->
+    <LinearLayout
+        android:id="@+id/folderNavRow"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:id="@+id/btnFolderPrev"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_chevron_left"
+            android:tag="accent_maroon_icon"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Previous folder" />
+
+        <TextView
+            android:id="@+id/tvFolderNavLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:alpha="0.7"
+            android:textColor="?android:attr/textColorPrimary"
+            android:text="" />
+
+        <ImageView
+            android:id="@+id/btnFolderNext"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_chevron_right"
+            android:tag="accent_maroon_icon"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Next folder" />
+    </LinearLayout>
+
+    <!-- v3.8.1: Test Summary now follows the Top Panel (maroon) accent
+         group, per explicit request.
+         v3.7 fix: was a plain <Button> with android:drawableStart, whose
+         icon wasn't actually rendering (same issue as Generate/Edit
+         Template's buttons — see that layout file's comment). Converted
+         to the same LinearLayout card-row pattern used everywhere else
+         in the app, plus swapped ic_document for the dedicated
+         ic_test_summary icon. -->
+    <!-- v1.0.1: Test Summary now shares this row with the new Save List
+         button, half-width each — per explicit request, same accent
+         group (accent_maroon) as Test Summary already had. Each card
+         keeps its own bg_card_rounded background/elevation/click target,
+         just at half the former width instead of match_parent. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/btnTestSummary"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/bg_card_rounded"
+            android:backgroundTint="?attr/colorPrimary"
+            android:tag="accent_maroon"
+            android:clipToOutline="true"
+            android:elevation="2dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <!-- v3.7 fix: same maroon-on-maroon issue as the header — this
+                 card's own parent is tagged accent_maroon, so the icon/text
+                 need the _on contrast variant instead of matching tags. -->
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_test_summary"
+                android:tint="@android:color/white"
+                android:tag="accent_maroon_icon_on"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Test Summary"
+                android:textAllCaps="true"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:tag="accent_maroon_text_on" />
+        </LinearLayout>
+
+        <!-- v1.1.0 FIX: layout_height changed from wrap_content to
+             match_parent on both this card and btnTestSummary above.
+             With wrap_content on both, a longer/scaled-up label (e.g.
+             "Test Summary" wrapping to 2 lines before "Save List" does,
+             at larger app font-scale settings) made its own card taller
+             while its sibling — still wrap_content, still 1 line — never
+             stretched to match, since the outer LinearLayout's own
+             height already resolves to wrap_content = the taller
+             sibling's height. match_parent on both makes each stretch to
+             fill that same resolved height instead. -->
+        <LinearLayout
+            android:id="@+id/btnSaveScanList"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/bg_card_rounded"
+            android:backgroundTint="?attr/colorPrimary"
+            android:tag="accent_maroon"
+            android:clipToOutline="true"
+            android:elevation="2dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_image"
+                android:tint="@android:color/white"
+                android:tag="accent_maroon_icon_on"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Save List"
+                android:textAllCaps="true"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:tag="accent_maroon_text_on" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Follows the gold (Button Accent) group, per explicit request —
+         Test Summary above follows the maroon (Top Panel Accent) group
+         instead; everything else on this screen stays theme-only. -->
+    <LinearLayout
+        android:id="@+id/btnScanIntoFolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_margin="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:background="@drawable/bg_card_rounded"
+        android:tag="accent_gold"
+        android:clipToOutline="true"
+        android:elevation="2dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- v3.7.3 fix: hardcoded black with no adaptivity — parent is
+             tagged accent_gold, fixed with _on contrast tags. -->
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_scan_action"
+            android:tint="@android:color/black"
+            android:tag="accent_gold_icon_on"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Scan Answer Sheets"
+            android:textAllCaps="true"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:tag="accent_gold_text_on" />
+    </LinearLayout>
+    </LinearLayout>
+    </FrameLayout>
+
+    <include
+        layout="@layout/drawer_content"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

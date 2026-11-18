@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- v3.6.8: replaces century_gothic_family.xml. Century Gothic is a
+     commercial Monotype typeface — bundling the actual font file in an app
+     distributed on Google Play without a redistribution license is a real
+     copyright risk, caught during a pre-publish review. Montserrat is on
+     Google Fonts under the SIL Open Font License (see
+     licenses/fonts/Montserrat-OFL.txt), which explicitly permits embedding
+     in and redistributing with an app — same app-wide wiring pattern as
+     before (see themes.xml), no other changes needed. -->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android">
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/montserrat_regular" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="700"
+        android:font="@font/montserrat_bold" />
+</font-family>

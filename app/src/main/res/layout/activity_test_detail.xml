@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/exam_background"
+            android:scaleType="centerCrop"
+            android:contentDescription="@null" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:attr/windowBackground"
+            android:alpha="0.96" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@color/tnhs_maroon"
+                android:tag="accent_maroon"
+                android:padding="16dp">
+
+                <!-- v3.7 fix: these three icons sit directly on the maroon
+                     header bar itself (the bar's own LinearLayout is tagged
+                     accent_maroon and gets its background tinted to the
+                     chosen Top Panel color). They were ALSO tagged
+                     accent_maroon_icon, which tints the icon glyph to that
+                     SAME color — maroon icon on a maroon bar, invisible.
+                     Fixed with accent_maroon_icon_on, which computes
+                     readable contrast against the bar's own color instead
+                     of matching it (see AccentColorPrefs.kt's tag-picking
+                     guide at the top of that file). -->
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_menu"
+                    android:tint="@android:color/white"
+                    android:tag="accent_maroon_icon_on"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Open menu" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/btnExportScans"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="16dp"
+                android:src="@android:drawable/ic_menu_save"
+                android:tint="@android:color/white"
+                android:tag="accent_maroon_icon_on"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Export scanned sheets" />
+
+            <ImageView
+                android:id="@+id/btnDeleteTest"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="16dp"
+                android:src="@android:drawable/ic_menu_delete"
+                android:tint="@android:color/white"
+                android:tag="accent_maroon_icon_on"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Delete test" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/tvTestDetailTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvTestDetailPreferences"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="13sp"
+                    android:alpha="0.8"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <!-- v3.0 redesign: no more maroon accent panel — was
+                     reading as "just another accent block" rather than
+                     data, and per explicit request this is now plain text
+                     that follows the theme's own text color (which v2.9's
+                     theme fix made solid/reliable in every theme, so this
+                     is safe to rely on now). Test title line removed from
+                     the body text itself (buildSummaryText's includeTitle
+                     parameter, see TestSummaryDialog) since it's redundant
+                     with the screen's own header above. tvSummaryFolderLabel
+                     shows which folder is currently being viewed — "All
+                     Folders" or a specific subfolder name — and the whole
+                     block is swipeable left/right between them (see
+                     TestDetailActivity's GestureDetector wiring). -->
+                <LinearLayout
+                    android:id="@+id/summarySwipeContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvSummaryFolderLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:alpha="0.7"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:visibility="gone" />
+
+                    <!-- v3.9.9 fix: this TextView's height was pure
+                         wrap_content, so its real rendered height differed
+                         a lot between the "has data" state (8 stat lines:
+                         Count/Highest/Lowest/Mean/Median/Mode/StdDev/2
+                         passer lines) and the "no data yet" state (1-2
+                         lines of placeholder text) — which visibly shifted
+                         the ANSWER SHEETS/SCANNED SHEETS/ITEM ANALYSIS
+                         button row below it up or down depending on
+                         which page of data (or lack of it) was currently
+                         showing. minHeight reserves enough room for the
+                         longest realistic content (8 stat lines at this
+                         view's own textSize/lineSpacingExtra/padding) so
+                         short content can't let this view — and therefore
+                         everything below it — shrink. Content taller than
+                         this minimum (unlikely, but not impossible) still
+                         grows normally since this is a MINIMUM, not a
+                         fixed height. -->
+                    <TextView
+                        android:id="@+id/tvInlineSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="184dp"
+                        android:layout_marginTop="4dp"
+                        android:padding="14dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="2dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <!-- Rounded-card list style (see MainActivity/attrs.xml for
+                     the shared theme attrs) — these three are navigational
+                     rows, not primary actions, so unlike btnScanFilledSheets
+                     below they are NOT accent-tagged: their card color
+                     follows Light/Dark/Black theme only, same as Home's
+                     Saved Tests rows. Icons are tinted via
+                     ?android:attr/textColorPrimary for the same reason —
+                     they read correctly on any theme without needing an
+                     accent color. Chevron reuses the app's existing
+                     text-glyph-instead-of-drawable convention (see
+                     btnAddNewTest's "＋" on the home screen). -->
+                <LinearLayout
+                    android:id="@+id/btnAnswerSheetTemplate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:background="@drawable/bg_card_rounded"
+                    android:clipToOutline="true"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:src="@drawable/ic_template_sheet"
+                        android:tint="?android:attr/textColorPrimary"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Answer Sheets"
+                        android:textAllCaps="true"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="\u203a"
+                        android:textSize="20sp"
+                        android:alpha="0.5"
+                        android:textColor="?android:attr/textColorPrimary" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btnScannedSheets"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:background="@drawable/bg_card_rounded"
+                    android:clipToOutline="true"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:src="@drawable/ic_scanned_sheets"
+                        android:tint="?android:attr/textColorPrimary"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Scanned Sheets"
+                        android:textAllCaps="true"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <!-- v3.7: fixed at the app's default gold
+                         (@color/tnhs_gold) rather than following the
+                         user's customizable Button Accent — per explicit
+                         request. No tag at all now (was accent_gold),
+                         since any accent tag would make AccentColorPrefs
+                         override this color on its walk. -->
+                    <TextView
+                        android:id="@+id/tvScannedSheetsCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:minWidth="28dp"
+                        android:gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp"
+                        android:background="@drawable/pill_background"
+                        android:backgroundTint="@color/tnhs_gold"
+                        android:text="0"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="\u203a"
+                        android:textSize="20sp"
+                        android:alpha="0.5"
+                        android:textColor="?android:attr/textColorPrimary" />
+                </LinearLayout>
+
+                <!-- Was a 50/50 row with Test Summary — now Item Analysis
+                     alone gets the full width in its place. -->
+                <LinearLayout
+                    android:id="@+id/btnItemAnalysis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:background="@drawable/bg_card_rounded"
+                    android:clipToOutline="true"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:src="@drawable/ic_item_analysis"
+                        android:tint="?android:attr/textColorPrimary"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Item Analysis"
+                        android:textAllCaps="true"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="\u203a"
+                        android:textSize="20sp"
+                        android:alpha="0.5"
+                        android:textColor="?android:attr/textColorPrimary" />
+                </LinearLayout>
+
+                <!-- v3.8 redesign: rebuilt as a rounded-card row matching
+                     the navigational cards above, instead of a default
+                     Material Button — the automatic corner radius/shape a
+                     plain Button gets from the app theme didn't match
+                     bg_card_rounded's 16dp radius, which is what made this
+                     look out of place. Still tagged accent_gold so the
+                     card's own background follows the Button Accent
+                     color. Kept as a LinearLayout (not a Button) since
+                     TestDetailActivity.kt already looks this up as a
+                     plain View, so no Kotlin change was needed for the
+                     click listener.
+                     v3.7 fix: icon/text below now use accent_gold_icon/
+                     accent_gold_text for computed contrast instead of a
+                     hardcoded color — white on a darker accent, black on
+                     a lighter one, computed fresh each time rather than
+                     assumed (see those tags' own comment below). Note
+                     this is a different choice than tvScannedSheetsCount
+                     above, which went the other way (v3.7: fixed at
+                     @color/tnhs_gold, no accent tag at all) — that badge
+                     is meant to stay a constant brand color regardless of
+                     accent choice, per explicit request, while this
+                     button's text/icon should track whatever gold shade
+                     the user picks. -->
+                <LinearLayout
+                    android:id="@+id/btnScanFilledSheets"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:background="@drawable/bg_card_rounded"
+                    android:backgroundTint="?attr/colorAccent"
+                    android:tag="accent_gold"
+                    android:clipToOutline="true"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <!-- v3.7 fix: accent_gold_icon/accent_gold_text tint
+                         straight to the group color — correct for an
+                         icon/text on a NEUTRAL background, but this card's
+                         own parent is ALSO tagged accent_gold (its
+                         background gets tinted to that same gold), so the
+                         old tags made the icon/text match their own card's
+                         background exactly: gold on gold, invisible.
+                         accent_gold_icon_on / accent_gold_text_on fix this
+                         properly: they compute contrast AGAINST the gold
+                         group color (white on a darker accent, black on a
+                         lighter one) instead of matching it. -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_scan_action"
+                        android:tint="?android:attr/textColorPrimary"
+                        android:tag="accent_gold_icon_on"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="Scan Answer Sheets"
+                        android:textAllCaps="true"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:tag="accent_gold_text_on" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+    </FrameLayout>
+
+    <include
+        layout="@layout/drawer_content"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

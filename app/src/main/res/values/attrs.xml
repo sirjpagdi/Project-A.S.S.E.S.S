@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Rounded-card list style (homescreen, and any other screen that
+         adopts it later): the card's fill and hairline stroke. These are
+         resolved per-theme (Light/Dark/Black) in themes.xml, NOT wired
+         into AccentColorPrefs' tag-walk system — cards stay a fixed
+         per-theme surface tone regardless of the user's chosen accent
+         color, by design (see MainActivity's card row comment). -->
+    <attr name="colorSurfaceCard" format="color" />
+    <attr name="colorSurfaceCardStroke" format="color" />
+</resources>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/exam_background"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/windowBackground"
+        android:alpha="0.96" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <ImageView
+            android:id="@+id/btnOpenDrawer"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/ic_menu"
+            android:tint="?android:attr/textColorPrimary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Open menu" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Changelog"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tvChangelogBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp" />
+
+        <!-- v1.0.0 reset: tap target that expands/collapses the historical
+             (pre-1.0) log below tvChangelogBody's v0.0.0 bridge entry. -->
+        <TextView
+            android:id="@+id/tvChangelogShowMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Show more"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp" />
+
+        <!-- Collapsed by default. Holds every entry from before the v1.0.0
+             reset (Changelog.legacyEntries) — untouched dev history. -->
+        <TextView
+            android:id="@+id/tvChangelogLegacyBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp"
+            android:visibility="gone" />
+
+        <!-- Welcome-animation toggle. v1.0.0 reset: deliberately moved to
+             sit below BOTH the v0.0.0 bridge entry AND the (collapsible)
+             legacy log — not pinned to a fixed spot above them. It's meant
+             to be the very last thing on this screen regardless of
+             expand/collapse state, so it naturally moves down the page
+             when the historical log is expanded, same as anything else
+             below a ScrollView item that grows. -->
+        <Switch
+            android:id="@+id/welcomeAnimToggle"
+            android:tag="accent_gold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Welcome animation on launch"
+            android:textColor="?android:attr/textColorPrimary" />
+
+    </LinearLayout>
+    </ScrollView>
+    </FrameLayout>
+
+    <include
+        layout="@layout/drawer_content"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

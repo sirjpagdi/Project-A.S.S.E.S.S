@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card_rounded"
+    android:backgroundTint="?android:attr/colorBackground"
+    android:elevation="2dp"
+    android:padding="14dp"
+    android:layout_marginBottom="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvCompetencySlotLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Competency 1"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <ImageView
+            android:id="@+id/btnDeleteCompetencySlot"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="4dp"
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Remove this competency" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etCompetencyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Type competency here"
+        android:inputType="textCapSentences"
+        android:maxLines="2" />
+
+    <LinearLayout
+        android:id="@+id/btnAssignTestItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@drawable/bg_pill_toggle_option"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ASSIGN TEST ITEM"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:textColor="@color/text_pill_toggle" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvCompetencySlotSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textSize="12sp"
+        android:alpha="0.7"
+        android:textColor="?android:attr/textColorPrimary"
+        android:text="No items assigned yet" />
+
+</LinearLayout>

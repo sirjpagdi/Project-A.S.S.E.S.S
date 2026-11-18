@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-files-path name="pdfs" path="pdfs/" />
+    <external-files-path name="backups" path="backups/" />
+    <external-files-path name="test_sheets" path="test_sheets/" />
+    <external-files-path name="diagnostics" path="diagnostics/" />
+    <!-- v2.9 FIX: this "exports" entry was missing entirely — ItemAnalysisXlsxExporter.shareViaFileProvider()
+         has been writing to getExternalFilesDir(null)/exports/ since it
+         was first added, but nothing ever registered that folder here.
+         FileProvider.getUriForFile() throws IllegalArgumentException for
+         any file outside a registered root, so the pre-Android-10 share
+         fallback for Item Analysis exports would have crashed on any
+         device below API 29 that ever hit it. Found while reviewing this
+         file for the v2.9 device-compatibility pass, not reported by a
+         user yet. -->
+    <external-files-path name="exports" path="exports/" />
+    <cache-path name="images" path="images/" />
+    <!-- v2.9: GenerateSheetActivity's merged GENERATE PDF flow now writes
+         its scratch working copy to cacheDir/pdfs (not the external-files
+         "pdfs" folder above anymore, to stop leaving a permanent duplicate
+         there — see GenerateSheetActivity.generatePdfThenPrompt). FileProvider
+         requires every real on-disk folder it's asked to serve a Uri for to
+         be explicitly registered here, or it throws at runtime — this is
+         the same lesson noted elsewhere in this file re: test_sheets. -->
+    <cache-path name="cache_pdfs" path="pdfs/" />
+    <!-- ItemAnalysisActivity's new generateXlsxThenPrompt() scratch copy. -->
+    <cache-path name="cache_exports" path="exports/" />
+    <!-- v3.6: TestDetailActivity's "Export Scanned Sheets" zip scratch copy
+         (see exportScansThenPrompt). Deliberately its OWN registered path
+         rather than reusing cache_exports above or cache_pdfs — keeps this
+         feature's temp zip file trivially identifiable/cleanable on its
+         own, and avoids any risk of colliding with either of those two
+         existing flows' same-named scratch files if both ever ran back to
+         back. -->
+    <cache-path name="cache_scan_exports" path="scan_exports/" />
+    <!-- v3.9.0: Update Checker's downloaded APK — UpdateInstaller writes
+         here via DownloadManager.setDestinationInExternalFilesDir(context,
+         "updates", fileName), then hands the same file back to
+         FileProvider to build the install Intent's content:// Uri. Same
+         "every real on-disk folder needs an explicit entry here or
+         FileProvider throws at runtime" lesson noted elsewhere in this
+         file. -->
+    <external-files-path name="updates" path="updates/" />
+</paths>

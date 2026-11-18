@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- v3.9.9: tag-storage keys for FontScaleController. These hold each
+         view's ORIGINAL (unscaled, as declared in XML) text size / height /
+         padding, captured once on first apply() so repeated scale changes
+         multiply from a stable base instead of compounding on top of the
+         previous scale. Not used for anything else — plain <item type="id">
+         declarations, no layout/view of this name exists. -->
+    <item name="tag_key_base_text_size" type="id" />
+    <item name="tag_key_base_pad_top" type="id" />
+    <item name="tag_key_base_pad_bottom" type="id" />
+</resources>
