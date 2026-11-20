@@ -28,6 +28,6 @@
     "JAVA_HOME": "/usr/local/sdkman/candidates/java/current"
   },
   "remoteEnv": {
-    "PATH": "/home/codespace/android-sdk/cmdline-tools/latest/bin:/home/codespace/android-sdk/platform-tools:/usr/local/sdkman/candidates/java/current/bin:${containerEnv:PATH}"
+    "PATH": "/home/codespace/android-sdk/cmdline-tools/bin:/usr/local/sdkman/candidates/java/current/bin:${containerEnv:PATH}"
   }
 }

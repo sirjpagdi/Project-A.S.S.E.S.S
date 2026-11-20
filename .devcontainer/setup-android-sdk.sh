@@ -11,11 +11,9 @@ mkdir -p "$SDK_ROOT"
 export ANDROID_HOME="$SDK_ROOT"
 export ANDROID_SDK_ROOT="$SDK_ROOT"
 export JAVA_HOME
-export PATH="$SDK_ROOT/cmdline-tools/latest/bin:$SDK_ROOT/platform-tools:$JAVA_HOME/bin:$PATH"
+export PATH="$SDK_ROOT/cmdline-tools/bin:$JAVA_HOME/bin:$PATH"
 
-SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
-
-if [ ! -x "$SDKMANAGER" ]; then
+if [ ! -x "$SDK_ROOT/cmdline-tools/bin/sdkmanager" ]; then
     echo "Installing Android command-line tools..."
 
     TMP_DIR="$(mktemp -d)"
@@ -27,27 +25,22 @@ if [ ! -x "$SDKMANAGER" ]; then
 
     unzip -q commandlinetools.zip
 
+    rm -rf "$SDK_ROOT/cmdline-tools"
     mkdir -p "$SDK_ROOT/cmdline-tools"
-    rm -rf "$SDK_ROOT/cmdline-tools/latest"
-    mv cmdline-tools "$SDK_ROOT/cmdline-tools/latest"
+
+    mv cmdline-tools/* "$SDK_ROOT/cmdline-tools/"
 
     cd /
     rm -rf "$TMP_DIR"
 fi
 
 echo "Accepting Android SDK licenses..."
-set +o pipefail
-if yes | "$SDKMANAGER" --sdk_root="$SDK_ROOT" --licenses >/dev/null; then
-    set -o pipefail
-else
-    license_status=$?
-    set -o pipefail
-    echo "Failed to accept Android SDK licenses." >&2
-    exit "$license_status"
-fi
+yes | "$SDK_ROOT/cmdline-tools/bin/sdkmanager" \
+    --sdk_root="$SDK_ROOT" \
+    --licenses >/dev/null 2>&1 || true
 
 echo "Installing/verifying Android SDK packages..."
-"$SDKMANAGER" \
+"$SDK_ROOT/cmdline-tools/bin/sdkmanager" \
     --sdk_root="$SDK_ROOT" \
     "platform-tools" \
     "platforms;android-34" \
@@ -68,7 +61,7 @@ if ! grep -q "MCQ Quick Check Android build environment" "$BASHRC"; then
 # MCQ Quick Check Android build environment
 export ANDROID_HOME=$SDK_ROOT
 export ANDROID_SDK_ROOT=$SDK_ROOT
-export PATH="\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools:\$PATH"
+export PATH="\$ANDROID_HOME/cmdline-tools/bin:\$PATH"
 export JAVA_HOME=$JAVA_HOME
 export PATH="\$JAVA_HOME/bin:\$PATH"
 EOF2

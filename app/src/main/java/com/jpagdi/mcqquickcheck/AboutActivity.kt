@@ -111,6 +111,7 @@ class AboutActivity : AppCompatActivity() {
         }
 
         appendBold("Project A.S.S.E.S.S.\n")
+        val versionLineStart = spannable.length
         appendBold("Version $versionName\n")
         // Tagline, per request — placement/styling wasn't specified, so
         // this goes directly under the name/version header, before the
@@ -130,6 +131,31 @@ class AboutActivity : AppCompatActivity() {
         spannable.append(getString(R.string.about_license))
 
         bodyView.text = spannable
+
+        // Long-press the "Version x.y.z" line to open the changelog. The
+        // touch position is remembered so only a press on that line counts,
+        // not a long-press anywhere else in the About text.
+        var lastTouchX = 0f
+        var lastTouchY = 0f
+        bodyView.setOnTouchListener { _, event ->
+            if (event.actionMasked == android.view.MotionEvent.ACTION_DOWN) {
+                lastTouchX = event.x
+                lastTouchY = event.y
+            }
+            false
+        }
+        bodyView.setOnLongClickListener { tv ->
+            val textView = tv as TextView
+            val layout = textView.layout ?: return@setOnLongClickListener false
+            val y = (lastTouchY - textView.totalPaddingTop + textView.scrollY).toInt()
+            val pressedLine = layout.getLineForVertical(y)
+            if (pressedLine == layout.getLineForOffset(versionLineStart)) {
+                startActivity(android.content.Intent(this, ChangelogActivity::class.java))
+                true
+            } else {
+                false
+            }
+        }
         // Justified body text, per request. justificationMode only exists
         // from API 26 onward — guarded so this can't crash on the API
         // 24-25 devices this app still supports (minSdk 24). Below API 26

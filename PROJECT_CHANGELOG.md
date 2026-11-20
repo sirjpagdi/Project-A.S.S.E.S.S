@@ -9,3 +9,4 @@
 - Full Android compilation and device regression tests pending.
 
 Historical upstream changes remain documented in `CHANGELOG.md`.
+- Changelog screen shows only Project A.S.S.E.S.S. entries; MCQ-era history hidden. Home and drawer version text is no longer a link; long-press 'Version' in About opens the changelog. Same version (1.0.0).

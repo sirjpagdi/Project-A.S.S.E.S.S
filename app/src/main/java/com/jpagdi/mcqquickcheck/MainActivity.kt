@@ -130,10 +130,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         val versionName = packageManager.getPackageInfo(packageName, 0).versionName
+        // The version text is plain text; the changelog is opened by a
+        // long-press on "Version x.y.z" in About.
         tvVersion.text = "v$versionName"
-        tvVersion.setOnClickListener {
-            startActivity(Intent(this, ChangelogActivity::class.java))
-        }
 
         findViewById<ImageView>(R.id.btnOpenDrawer).also {
             DrawerHelper.attach(this, drawerLayout, it)

@@ -247,8 +247,6 @@
                 android:text="v0.0"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"
-                android:clickable="true"
-                android:focusable="true"
                 android:padding="8dp" />
 
             <TextView

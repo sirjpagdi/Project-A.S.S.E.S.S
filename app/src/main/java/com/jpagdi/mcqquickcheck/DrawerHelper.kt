@@ -131,9 +131,8 @@ object DrawerHelper {
         drawerLayout.findViewById<TextView>(R.id.drawerThemeLabel)?.text =
             "Theme: ${ThemePrefs.getTheme(activity).label}"
 
-        drawerLayout.findViewById<LinearLayout>(R.id.drawerFooter)?.setOnClickListener {
-            activity.startActivity(Intent(activity, ChangelogActivity::class.java))
-        }
+        // The footer (version + developer credit) is plain text; the
+        // changelog opens from a long-press on the version line in About.
         // v1.2.0: Classes entry (under DATA, after Backup/Restore). Active
         // (plan + Settings switch on): normal entry. Plan without access:
         // shown with a lock; opens the (read-only) class list if the teacher

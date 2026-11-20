@@ -88,9 +88,15 @@ object Changelog {
                 "Changed: the only online feature is the optional update check against the project's GitHub releases. It only reads the latest release; no learner or test data is sent.",
                 "Changed: Android's automatic cloud backup is off so learner records stay on the device. Use Backup Data (in the app) to keep a copy.",
                 "Includes test sets, per-set answer keys and competencies, learners and archiving, and tablet landscape (scanning stays portrait).",
-                "The entries below are the earlier MCQ Quick Check history this edition is built from."
+                "Changed: the version text on the home screen and menu is plain text now. To open this log, long-press \"Version\" in About."
             )
         ),
+    )
+
+    /** MCQ Quick Check history from before Project A.S.S.E.S.S. Kept for
+     *  provenance only; the app no longer shows it (see ChangelogActivity). */
+    @Suppress("unused")
+    val mcqHistory = listOf(
         ChangelogEntry(
             version = "1.2.5",
             date = "2026-11-10",
